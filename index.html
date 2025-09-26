@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Dan!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        /* General body styling */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1d2b64, #f8cdda); 
+            overflow: hidden; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; 
+        }
+
+        .birthday-card {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            color: white;
+            position: relative; 
+            align-content: center;
+            z-index: 2; 
+            padding: 20px;
+            padding-left: 50px;
+        }
+
+        .birthday-message {
+            font-family: 'Great Vibes', cursive;
+            font-size: 6rem; /* Large font size for impact */
+            font-weight: 500;
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Adds depth to the text */
+            margin: 0 0 10px 0;
+            animation: fadeIn 3s ease-in-out;
+        }
+        h1{
+            color: aquamarine;
+        }
+        
+        /* The new heartfelt wish */
+        .birthday-wish {
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin: 0 30px 30px;
+            line-height: 1.6;
+            max-width: 600px; /* Keeps the text from getting too wide */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+            /* Starts transparent and fades in after the main title */
+            animation: fadeIn 3s ease-in-out 0.5s;
+            animation-fill-mode: backwards;
+        }
+
+        /* The realistic cake image */
+        .birthday-cake {
+            max-width: 300px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: popIn 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        /* Balloon styling */
+        .balloon {
+            width: 70px;
+            height: 90px;
+            background-color: rgba(255, 99, 71, 0.8); /* Default color */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Classic balloon shape */
+            position: absolute;
+            bottom: -100px; /* Start below the screen */
+            animation: floatUp 10s infinite linear;
+            box-shadow: inset -10px -10px 0 rgba(0,0,0,0.07);
+            z-index: 0; /* Keep balloons behind everything */
+        }
+
+        /* Keyframe animations */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-120vh) rotate(720deg); /* Float up and off the screen while spinning */
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .birthday-message {
+                font-size: 4rem;
+            }
+            .birthday-wish {
+                font-size: 1.2rem;
+            }
+            .birthday-cake {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .birthday-message {
+                font-size: 3rem;
+            }
+            .birthday-wish {
+                font-size: 1rem;
+                margin: 0 20px 20px;
+            }
+            .birthday-cake {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="birthday-card">
+        <h1 class="birthday-message">Happy Birthday Dan!</h1>
+        <p class="birthday-wish">
+            Wishing you the happiest of birthdays! May you live a long, wonderful life filled with joy, and the courage to always follow what your heart desires.
+        </p>
+        <img src="cake.png" alt="A realistic birthday cake" class="birthday-cake">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFETTI ---
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let confettiParticles = [];
+            const particleCount = 300;
+            const colors = ['#f6d365', '#fda085', '#ff9a9e', '#fecfef', '#a1c4fd', '#c2e9fb'];
+
+            class ConfettiParticle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = Math.random() * 7 + 3;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.velocity = {
+                        x: (Math.random() - 0.5) * 10,
+                        y: Math.random() * 5 + 2
+                    };
+                    this.opacity = 1;
+                    this.angle = 0;
+                    this.rotation = Math.random() * 0.1 - 0.05;
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.opacity;
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.angle);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                    ctx.restore();
+                }
+
+                update() {
+                    this.x += this.velocity.x;
+                    this.y += this.velocity.y;
+                    this.angle += this.rotation;
+                    this.opacity -= 0.01;
+                    this.draw();
+                }
+            }
+
+            function initConfetti() {
+                for (let i = 0; i < particleCount; i++) {
+                    confettiParticles.push(new ConfettiParticle(Math.random() * canvas.width, -Math.random() * canvas.height));
+                }
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiParticles.forEach((particle, index) => {
+                    if (particle.opacity <= 0) {
+                        confettiParticles.splice(index, 1);
+                    } else {
+                        particle.update();
+                    }
+                });
+
+                // Add more particles to keep the animation going
+                if (confettiParticles.length < particleCount / 2) {
+                     for (let i = 0; i < 5; i++) {
+                        confettiParticles.push(new ConfettiParticle(Math.random() * canvas.width, -20));
+                     }
+                }
+                requestAnimationFrame(animateConfetti);
+            }
+
+            // --- BALLOONS ---
+            const balloonCount = 20;
+            const balloonColors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#1abc9c'];
+
+            function createBalloons() {
+                for (let i = 0; i < balloonCount; i++) {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    
+                    // Randomize properties
+                    balloon.style.left = `${Math.random() * 100}vw`;
+                    balloon.style.backgroundColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+                    balloon.style.animationDuration = `${Math.random() * 5 + 8}s`; // 8 to 13 seconds
+                    balloon.style.animationDelay = `${Math.random() * 5}s`;
+
+                    document.body.appendChild(balloon);
+                }
+            }
+
+            // --- Start everything ---
+            initConfetti();
+            animateConfetti();
+            createBalloons();
+
+            // Adjust canvas on window resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
+    </script>
+</body>
+</html>
